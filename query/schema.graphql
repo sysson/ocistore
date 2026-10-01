@@ -1,4 +1,4 @@
-# Dinki metadata query schema. Every field reads the metadata indexes; only
+# OCI store metadata query schema. Every field reads the metadata indexes; only
 # ImageConfig reads a (small) config blob from content storage. Results are
 # snapshots: they never authorize deletion, which garbage collection re-checks.
 schema {

@@ -50,6 +50,8 @@ func main() {
 
 Use absolute paths for the local drivers. bbolt holds an exclusive file lock, so use a remote KV driver when multiple processes need to share metadata.
 
+For remote metadata, `etcdkv.Config.Prefix` defaults to `/ocistore`; `natskv.Options` defaults to stream `OCISTORE_METADATA` and subject `ocistore.metadata`. Set these fields to choose a different namespace.
+
 ## Serve a registry
 
 The store implements `oci.Interface`, so `github.com/docker/oci/ociserver` can expose it as an OCI distribution registry. After creating `store` in the example above, replace the repository listing with:

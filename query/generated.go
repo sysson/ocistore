@@ -1763,7 +1763,7 @@ func (ec *executionContext) _Blob_dependents(ctx context.Context, field graphql.
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Dependent) graphql.Marshaler {
-			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDependentᚄ(ctx, selections, v)
+			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDependentᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -1944,7 +1944,7 @@ func (ec *executionContext) _ClosureEntry_sharedWith(ctx context.Context, field 
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Dependent) graphql.Marshaler {
-			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDependentᚄ(ctx, selections, v)
+			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDependentᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -1976,7 +1976,7 @@ func (ec *executionContext) _ClosureEntry_locations(ctx context.Context, field g
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Location) graphql.Marshaler {
-			return ec.marshalNLocation2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐLocationᚄ(ctx, selections, v)
+			return ec.marshalNLocation2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐLocationᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -2054,7 +2054,7 @@ func (ec *executionContext) _Content_locations(ctx context.Context, field graphq
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Location) graphql.Marshaler {
-			return ec.marshalNLocation2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐLocationᚄ(ctx, selections, v)
+			return ec.marshalNLocation2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐLocationᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -2087,7 +2087,7 @@ func (ec *executionContext) _Content_dependents(ctx context.Context, field graph
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Dependent) graphql.Marshaler {
-			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDependentᚄ(ctx, selections, v)
+			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDependentᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -2199,7 +2199,7 @@ func (ec *executionContext) _Dependent_manifest(ctx context.Context, field graph
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Manifest) graphql.Marshaler {
-			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx, selections, v)
+			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, selections, v)
 		},
 		true,
 		false,
@@ -2323,7 +2323,7 @@ func (ec *executionContext) _Descriptor_annotations(ctx context.Context, field g
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Annotation) graphql.Marshaler {
-			return ec.marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐAnnotationᚄ(ctx, selections, v)
+			return ec.marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐAnnotationᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -2378,7 +2378,7 @@ func (ec *executionContext) _Descriptor_platform(ctx context.Context, field grap
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Platform) graphql.Marshaler {
-			return ec.marshalOPlatform2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐPlatform(ctx, selections, v)
+			return ec.marshalOPlatform2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐPlatform(ctx, selections, v)
 		},
 		true,
 		false,
@@ -2410,7 +2410,7 @@ func (ec *executionContext) _Descriptor_manifest(ctx context.Context, field grap
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Manifest) graphql.Marshaler {
-			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx, selections, v)
+			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, selections, v)
 		},
 		true,
 		false,
@@ -2810,7 +2810,7 @@ func (ec *executionContext) _ImageConfig_labels(ctx context.Context, field graph
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Annotation) graphql.Marshaler {
-			return ec.marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐAnnotationᚄ(ctx, selections, v)
+			return ec.marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐAnnotationᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -2934,7 +2934,7 @@ func (ec *executionContext) _ImageConfig_history(ctx context.Context, field grap
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*History) graphql.Marshaler {
-			return ec.marshalNHistory2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐHistoryᚄ(ctx, selections, v)
+			return ec.marshalNHistory2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐHistoryᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3150,7 +3150,7 @@ func (ec *executionContext) _Manifest_annotations(ctx context.Context, field gra
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Annotation) graphql.Marshaler {
-			return ec.marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐAnnotationᚄ(ctx, selections, v)
+			return ec.marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐAnnotationᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3228,7 +3228,7 @@ func (ec *executionContext) _Manifest_config(ctx context.Context, field graphql.
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Descriptor) graphql.Marshaler {
-			return ec.marshalODescriptor2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptor(ctx, selections, v)
+			return ec.marshalODescriptor2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptor(ctx, selections, v)
 		},
 		true,
 		false,
@@ -3260,7 +3260,7 @@ func (ec *executionContext) _Manifest_layers(ctx context.Context, field graphql.
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Descriptor) graphql.Marshaler {
-			return ec.marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptorᚄ(ctx, selections, v)
+			return ec.marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptorᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3292,7 +3292,7 @@ func (ec *executionContext) _Manifest_manifests(ctx context.Context, field graph
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Descriptor) graphql.Marshaler {
-			return ec.marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptorᚄ(ctx, selections, v)
+			return ec.marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptorᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3324,7 +3324,7 @@ func (ec *executionContext) _Manifest_subject(ctx context.Context, field graphql
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Descriptor) graphql.Marshaler {
-			return ec.marshalODescriptor2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptor(ctx, selections, v)
+			return ec.marshalODescriptor2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptor(ctx, selections, v)
 		},
 		true,
 		false,
@@ -3357,7 +3357,7 @@ func (ec *executionContext) _Manifest_referrers(ctx context.Context, field graph
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Descriptor) graphql.Marshaler {
-			return ec.marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptorᚄ(ctx, selections, v)
+			return ec.marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptorᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3401,7 +3401,7 @@ func (ec *executionContext) _Manifest_dependents(ctx context.Context, field grap
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Dependent) graphql.Marshaler {
-			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDependentᚄ(ctx, selections, v)
+			return ec.marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDependentᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3444,7 +3444,7 @@ func (ec *executionContext) _Manifest_closure(ctx context.Context, field graphql
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*ClosureEntry) graphql.Marshaler {
-			return ec.marshalNClosureEntry2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐClosureEntryᚄ(ctx, selections, v)
+			return ec.marshalNClosureEntry2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐClosureEntryᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3476,7 +3476,7 @@ func (ec *executionContext) _Manifest_imageConfig(ctx context.Context, field gra
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *ImageConfig) graphql.Marshaler {
-			return ec.marshalOImageConfig2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐImageConfig(ctx, selections, v)
+			return ec.marshalOImageConfig2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐImageConfig(ctx, selections, v)
 		},
 		true,
 		false,
@@ -3624,7 +3624,7 @@ func (ec *executionContext) _Query_repositories(ctx context.Context, field graph
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Repository) graphql.Marshaler {
-			return ec.marshalNRepository2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐRepositoryᚄ(ctx, selections, v)
+			return ec.marshalNRepository2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐRepositoryᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3668,7 +3668,7 @@ func (ec *executionContext) _Query_repository(ctx context.Context, field graphql
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Repository) graphql.Marshaler {
-			return ec.marshalORepository2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐRepository(ctx, selections, v)
+			return ec.marshalORepository2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐRepository(ctx, selections, v)
 		},
 		true,
 		false,
@@ -3712,7 +3712,7 @@ func (ec *executionContext) _Query_image(ctx context.Context, field graphql.Coll
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Manifest) graphql.Marshaler {
-			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx, selections, v)
+			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, selections, v)
 		},
 		true,
 		false,
@@ -3756,7 +3756,7 @@ func (ec *executionContext) _Query_manifest(ctx context.Context, field graphql.C
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Manifest) graphql.Marshaler {
-			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx, selections, v)
+			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, selections, v)
 		},
 		true,
 		false,
@@ -3800,7 +3800,7 @@ func (ec *executionContext) _Query_content(ctx context.Context, field graphql.Co
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Content) graphql.Marshaler {
-			return ec.marshalNContent2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐContent(ctx, selections, v)
+			return ec.marshalNContent2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐContent(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3943,7 +3943,7 @@ func (ec *executionContext) _Repository_tags(ctx context.Context, field graphql.
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Tag) graphql.Marshaler {
-			return ec.marshalNTag2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐTagᚄ(ctx, selections, v)
+			return ec.marshalNTag2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐTagᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -3987,7 +3987,7 @@ func (ec *executionContext) _Repository_manifests(ctx context.Context, field gra
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Manifest) graphql.Marshaler {
-			return ec.marshalNManifest2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifestᚄ(ctx, selections, v)
+			return ec.marshalNManifest2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifestᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -4031,7 +4031,7 @@ func (ec *executionContext) _Repository_blobs(ctx context.Context, field graphql
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v []*Blob) graphql.Marshaler {
-			return ec.marshalNBlob2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐBlobᚄ(ctx, selections, v)
+			return ec.marshalNBlob2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐBlobᚄ(ctx, selections, v)
 		},
 		true,
 		true,
@@ -4166,7 +4166,7 @@ func (ec *executionContext) _Tag_manifest(ctx context.Context, field graphql.Col
 		},
 		nil,
 		func(ctx context.Context, selections ast.SelectionSet, v *Manifest) graphql.Marshaler {
-			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx, selections, v)
+			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, selections, v)
 		},
 		true,
 		false,
@@ -7201,11 +7201,11 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐAnnotationᚄ(ctx context.Context, sel ast.SelectionSet, v []*Annotation) graphql.Marshaler {
+func (ec *executionContext) marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐAnnotationᚄ(ctx context.Context, sel ast.SelectionSet, v []*Annotation) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNAnnotation2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐAnnotation(ctx, sel, v[i])
+		return ec.marshalNAnnotation2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐAnnotation(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7217,7 +7217,7 @@ func (ec *executionContext) marshalNAnnotation2ᚕᚖgithubᚗcomᚋsyssonᚋdin
 	return ret
 }
 
-func (ec *executionContext) marshalNAnnotation2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐAnnotation(ctx context.Context, sel ast.SelectionSet, v *Annotation) graphql.Marshaler {
+func (ec *executionContext) marshalNAnnotation2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐAnnotation(ctx context.Context, sel ast.SelectionSet, v *Annotation) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7227,11 +7227,11 @@ func (ec *executionContext) marshalNAnnotation2ᚖgithubᚗcomᚋsyssonᚋdink�
 	return ec._Annotation(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNBlob2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐBlobᚄ(ctx context.Context, sel ast.SelectionSet, v []*Blob) graphql.Marshaler {
+func (ec *executionContext) marshalNBlob2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐBlobᚄ(ctx context.Context, sel ast.SelectionSet, v []*Blob) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNBlob2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐBlob(ctx, sel, v[i])
+		return ec.marshalNBlob2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐBlob(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7243,7 +7243,7 @@ func (ec *executionContext) marshalNBlob2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋco
 	return ret
 }
 
-func (ec *executionContext) marshalNBlob2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐBlob(ctx context.Context, sel ast.SelectionSet, v *Blob) graphql.Marshaler {
+func (ec *executionContext) marshalNBlob2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐBlob(ctx context.Context, sel ast.SelectionSet, v *Blob) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7269,11 +7269,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNClosureEntry2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐClosureEntryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ClosureEntry) graphql.Marshaler {
+func (ec *executionContext) marshalNClosureEntry2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐClosureEntryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ClosureEntry) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNClosureEntry2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐClosureEntry(ctx, sel, v[i])
+		return ec.marshalNClosureEntry2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐClosureEntry(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7285,7 +7285,7 @@ func (ec *executionContext) marshalNClosureEntry2ᚕᚖgithubᚗcomᚋsyssonᚋd
 	return ret
 }
 
-func (ec *executionContext) marshalNClosureEntry2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐClosureEntry(ctx context.Context, sel ast.SelectionSet, v *ClosureEntry) graphql.Marshaler {
+func (ec *executionContext) marshalNClosureEntry2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐClosureEntry(ctx context.Context, sel ast.SelectionSet, v *ClosureEntry) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7311,7 +7311,7 @@ func (ec *executionContext) marshalNClosureRole2string(ctx context.Context, sel 
 	return res
 }
 
-func (ec *executionContext) marshalNContent2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐContent(ctx context.Context, sel ast.SelectionSet, v *Content) graphql.Marshaler {
+func (ec *executionContext) marshalNContent2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐContent(ctx context.Context, sel ast.SelectionSet, v *Content) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7337,11 +7337,11 @@ func (ec *executionContext) marshalNContentKind2string(ctx context.Context, sel 
 	return res
 }
 
-func (ec *executionContext) marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDependentᚄ(ctx context.Context, sel ast.SelectionSet, v []*Dependent) graphql.Marshaler {
+func (ec *executionContext) marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDependentᚄ(ctx context.Context, sel ast.SelectionSet, v []*Dependent) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNDependent2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDependent(ctx, sel, v[i])
+		return ec.marshalNDependent2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDependent(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7353,7 +7353,7 @@ func (ec *executionContext) marshalNDependent2ᚕᚖgithubᚗcomᚋsyssonᚋdink
 	return ret
 }
 
-func (ec *executionContext) marshalNDependent2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDependent(ctx context.Context, sel ast.SelectionSet, v *Dependent) graphql.Marshaler {
+func (ec *executionContext) marshalNDependent2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDependent(ctx context.Context, sel ast.SelectionSet, v *Dependent) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7363,11 +7363,11 @@ func (ec *executionContext) marshalNDependent2ᚖgithubᚗcomᚋsyssonᚋdinkᚋ
 	return ec._Dependent(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptorᚄ(ctx context.Context, sel ast.SelectionSet, v []*Descriptor) graphql.Marshaler {
+func (ec *executionContext) marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptorᚄ(ctx context.Context, sel ast.SelectionSet, v []*Descriptor) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNDescriptor2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptor(ctx, sel, v[i])
+		return ec.marshalNDescriptor2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptor(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7379,7 +7379,7 @@ func (ec *executionContext) marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋdin
 	return ret
 }
 
-func (ec *executionContext) marshalNDescriptor2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptor(ctx context.Context, sel ast.SelectionSet, v *Descriptor) graphql.Marshaler {
+func (ec *executionContext) marshalNDescriptor2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptor(ctx context.Context, sel ast.SelectionSet, v *Descriptor) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7389,11 +7389,11 @@ func (ec *executionContext) marshalNDescriptor2ᚖgithubᚗcomᚋsyssonᚋdink�
 	return ec._Descriptor(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNHistory2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐHistoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*History) graphql.Marshaler {
+func (ec *executionContext) marshalNHistory2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐHistoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*History) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNHistory2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐHistory(ctx, sel, v[i])
+		return ec.marshalNHistory2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐHistory(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7405,7 +7405,7 @@ func (ec *executionContext) marshalNHistory2ᚕᚖgithubᚗcomᚋsyssonᚋdink�
 	return ret
 }
 
-func (ec *executionContext) marshalNHistory2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐHistory(ctx context.Context, sel ast.SelectionSet, v *History) graphql.Marshaler {
+func (ec *executionContext) marshalNHistory2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐHistory(ctx context.Context, sel ast.SelectionSet, v *History) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7415,11 +7415,11 @@ func (ec *executionContext) marshalNHistory2ᚖgithubᚗcomᚋsyssonᚋdinkᚋco
 	return ec._History(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNLocation2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐLocationᚄ(ctx context.Context, sel ast.SelectionSet, v []*Location) graphql.Marshaler {
+func (ec *executionContext) marshalNLocation2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐLocationᚄ(ctx context.Context, sel ast.SelectionSet, v []*Location) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNLocation2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐLocation(ctx, sel, v[i])
+		return ec.marshalNLocation2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐLocation(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7431,7 +7431,7 @@ func (ec *executionContext) marshalNLocation2ᚕᚖgithubᚗcomᚋsyssonᚋdink�
 	return ret
 }
 
-func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐLocation(ctx context.Context, sel ast.SelectionSet, v *Location) graphql.Marshaler {
+func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐLocation(ctx context.Context, sel ast.SelectionSet, v *Location) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7457,11 +7457,11 @@ func (ec *executionContext) marshalNLong2int64(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) marshalNManifest2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifestᚄ(ctx context.Context, sel ast.SelectionSet, v []*Manifest) graphql.Marshaler {
+func (ec *executionContext) marshalNManifest2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifestᚄ(ctx context.Context, sel ast.SelectionSet, v []*Manifest) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx, sel, v[i])
+		return ec.marshalNManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7473,7 +7473,7 @@ func (ec *executionContext) marshalNManifest2ᚕᚖgithubᚗcomᚋsyssonᚋdink�
 	return ret
 }
 
-func (ec *executionContext) marshalNManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx context.Context, sel ast.SelectionSet, v *Manifest) graphql.Marshaler {
+func (ec *executionContext) marshalNManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx context.Context, sel ast.SelectionSet, v *Manifest) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7483,11 +7483,11 @@ func (ec *executionContext) marshalNManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋc
 	return ec._Manifest(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNRepository2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐRepositoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*Repository) graphql.Marshaler {
+func (ec *executionContext) marshalNRepository2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐRepositoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*Repository) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNRepository2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐRepository(ctx, sel, v[i])
+		return ec.marshalNRepository2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐRepository(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7499,7 +7499,7 @@ func (ec *executionContext) marshalNRepository2ᚕᚖgithubᚗcomᚋsyssonᚋdin
 	return ret
 }
 
-func (ec *executionContext) marshalNRepository2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐRepository(ctx context.Context, sel ast.SelectionSet, v *Repository) graphql.Marshaler {
+func (ec *executionContext) marshalNRepository2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐRepository(ctx context.Context, sel ast.SelectionSet, v *Repository) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7554,11 +7554,11 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*Tag) graphql.Marshaler {
+func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*Tag) graphql.Marshaler {
 	ret := graphql.MarshalSliceConcurrently(ctx, len(v), 16, false, func(ctx context.Context, i int) graphql.Marshaler {
 		fc := graphql.GetFieldContext(ctx)
 		fc.Result = &v[i]
-		return ec.marshalNTag2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐTag(ctx, sel, v[i])
+		return ec.marshalNTag2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐTag(ctx, sel, v[i])
 	})
 
 	for _, e := range ret {
@@ -7570,7 +7570,7 @@ func (ec *executionContext) marshalNTag2ᚕᚖgithubᚗcomᚋsyssonᚋdinkᚋcor
 	return ret
 }
 
-func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐTag(ctx context.Context, sel ast.SelectionSet, v *Tag) graphql.Marshaler {
+func (ec *executionContext) marshalNTag2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐTag(ctx context.Context, sel ast.SelectionSet, v *Tag) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			graphql.AddErrorf(ctx, "the requested element is null which the schema does not allow")
@@ -7766,14 +7766,14 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalODescriptor2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐDescriptor(ctx context.Context, sel ast.SelectionSet, v *Descriptor) graphql.Marshaler {
+func (ec *executionContext) marshalODescriptor2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptor(ctx context.Context, sel ast.SelectionSet, v *Descriptor) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Descriptor(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOImageConfig2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐImageConfig(ctx context.Context, sel ast.SelectionSet, v *ImageConfig) graphql.Marshaler {
+func (ec *executionContext) marshalOImageConfig2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐImageConfig(ctx context.Context, sel ast.SelectionSet, v *ImageConfig) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -7798,21 +7798,21 @@ func (ec *executionContext) marshalOInt2ᚖint32(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐManifest(ctx context.Context, sel ast.SelectionSet, v *Manifest) graphql.Marshaler {
+func (ec *executionContext) marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx context.Context, sel ast.SelectionSet, v *Manifest) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Manifest(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPlatform2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐPlatform(ctx context.Context, sel ast.SelectionSet, v *Platform) graphql.Marshaler {
+func (ec *executionContext) marshalOPlatform2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐPlatform(ctx context.Context, sel ast.SelectionSet, v *Platform) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Platform(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalORepository2ᚖgithubᚗcomᚋsyssonᚋdinkᚋcoreᚋregistryᚋqueryᚐRepository(ctx context.Context, sel ast.SelectionSet, v *Repository) graphql.Marshaler {
+func (ec *executionContext) marshalORepository2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐRepository(ctx context.Context, sel ast.SelectionSet, v *Repository) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

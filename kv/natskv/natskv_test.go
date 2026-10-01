@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/sysson/ocistore/kv"
 	"github.com/sysson/ocistore/kv/kvtest"
 	"github.com/sysson/ocistore/kv/natskv"
@@ -21,6 +22,34 @@ func TestConformance(t *testing.T) {
 		t.Fatal(err)
 	}
 	kvtest.Run(t, store)
+}
+
+func TestDefaultNamespace(t *testing.T) {
+	ctx := t.Context()
+	nc, err := nats.Connect(kvtest.StartNATS(t))
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(nc.Close)
+	_, err = natskv.New(ctx, nc, natskv.Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	js, err := jetstream.New(nc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	stream, err := js.Stream(ctx, "OCISTORE_METADATA")
+	if err != nil {
+		t.Fatal(err)
+	}
+	info, err := stream.Info(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(info.Config.Subjects) != 1 || info.Config.Subjects[0] != "ocistore.metadata.>" {
+		t.Fatalf("stream subjects = %q", info.Config.Subjects)
+	}
 }
 
 func TestConfigOpen(t *testing.T) {
@@ -55,7 +84,7 @@ func TestConfigOpen(t *testing.T) {
 func TestConfigValidate(t *testing.T) {
 	valid := map[string]natskv.Config{
 		"bare":   {Servers: []string{"a:4222", "b:4222"}},
-		"urls":   {Servers: []string{"nats://u:p@a:4222", "tls://b:4222"}, Options: natskv.Options{Stream: "META", Subject: "dinki.meta", Replicas: 3}},
+		"urls":   {Servers: []string{"nats://u:p@a:4222", "tls://b:4222"}, Options: natskv.Options{Stream: "META", Subject: "registry.meta", Replicas: 3}},
 		"secure": {Servers: []string{"a:4222"}, CredentialsFile: "/c", TLS: &kv.TLSConfig{CAFile: "/ca"}},
 	}
 	for name, cfg := range valid {
