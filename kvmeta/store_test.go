@@ -2,7 +2,6 @@ package kvmeta_test
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"path/filepath"
 	"slices"
@@ -57,39 +56,34 @@ type fixture struct {
 	ctx   context.Context
 }
 
-func TestMigrateV1PendingIndex(t *testing.T) {
-	ctx := context.Background()
+func TestSchemaInitialization(t *testing.T) {
+	ctx := t.Context()
 	raw := memkv.New()
-	session, err := json.Marshal(backend.UploadSession{ID: "upload", Repository: "team/app", StartedAt: time.Now()})
-	if err != nil {
+	if _, err := kvmeta.New(ctx, raw); err != nil {
 		t.Fatal(err)
 	}
-	if err := raw.Update(ctx, func(tx kv.Txn) error {
-		return errors.Join(
-			tx.Put(kv.Key("schema"), []byte("1")),
-			tx.Put(kv.Key("repo", "team/app"), []byte("{}")),
-			tx.Put(kv.Key("upload", "upload"), session),
-		)
+	if err := raw.View(ctx, func(reader kv.Reader) error {
+		version, err := reader.Get(ctx, kv.Key("schema"))
+		if err != nil {
+			return err
+		}
+		if string(version) != "1" {
+			t.Errorf("schema version = %q, want 1", version)
+		}
+		return nil
 	}); err != nil {
 		t.Fatal(err)
 	}
-	store, err := kvmeta.New(ctx, raw)
-	if err != nil {
+	if _, err := kvmeta.New(ctx, raw); err != nil {
 		t.Fatal(err)
 	}
-	f := fixture{t: t, store: store, ctx: ctx}
-	blob := f.blob("team/app", "content")
-	if _, err := store.DeleteBlob(ctx, "team/app", blob.Digest); err != nil {
+	if err := raw.Update(ctx, func(tx kv.Txn) error {
+		return tx.Put(kv.Key("schema"), []byte("unsupported"))
+	}); err != nil {
 		t.Fatal(err)
 	}
-	if repositories, err := store.Repositories(ctx, "", 10); err != nil || !slices.Equal(repositories, []string{"team/app"}) {
-		t.Fatalf("repositories with a migrated upload = %v, %v; want [team/app]", repositories, err)
-	}
-	if err := store.DeleteUpload(ctx, "team/app", "upload"); err != nil {
-		t.Fatal(err)
-	}
-	if repositories, err := store.Repositories(ctx, "", 10); err != nil || len(repositories) != 0 {
-		t.Fatalf("repositories after deleting the migrated upload = %v, %v; want none", repositories, err)
+	if _, err := kvmeta.New(ctx, raw); err == nil {
+		t.Fatal("New() with unsupported schema = nil error")
 	}
 }
 

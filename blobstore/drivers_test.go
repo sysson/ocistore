@@ -100,11 +100,11 @@ func TestCloudDrivers(t *testing.T) {
 		cfg  driver
 		want string
 	}{
-		"s3": {s3blob.Config{Bucket: "dinki", Prefix: "registry", Region: "eu-west-1", Endpoint: "http://127.0.0.1:1",
+		"s3": {s3blob.Config{Bucket: "registry-test", Prefix: "registry", Region: "eu-west-1", Endpoint: "http://127.0.0.1:1",
 			UsePathStyle: true, DisableHTTPS: true, SSEType: "aws:kms", KMSKeyID: "key"},
-			"s3://dinki?disable_https=true&endpoint=http%3A%2F%2F127.0.0.1%3A1&kmskeyid=key&prefix=registry%2F&region=eu-west-1&ssetype=aws%3Akms&use_path_style=true"},
-		"gcs":   {gcsblob.Config{Bucket: "dinki-blobs", Prefix: "a/b/", Anonymous: true}, "gs://dinki-blobs?anonymous=true&prefix=a%2Fb%2F"},
-		"azure": {azureblob.Config{Container: "dinki", AccountName: "acct", Protocol: "http", Domain: "127.0.0.1:1"}, "azblob://dinki?domain=127.0.0.1%3A1&protocol=http&storage_account=acct"},
+			"s3://registry-test?disable_https=true&endpoint=http%3A%2F%2F127.0.0.1%3A1&kmskeyid=key&prefix=registry%2F&region=eu-west-1&ssetype=aws%3Akms&use_path_style=true"},
+		"gcs":   {gcsblob.Config{Bucket: "registry-blobs", Prefix: "a/b/", Anonymous: true}, "gs://registry-blobs?anonymous=true&prefix=a%2Fb%2F"},
+		"azure": {azureblob.Config{Container: "registry-test", AccountName: "acct", Protocol: "http", Domain: "127.0.0.1:1"}, "azblob://registry-test?domain=127.0.0.1%3A1&protocol=http&storage_account=acct"},
 	} {
 		t.Run(name, func(t *testing.T) {
 			if err := test.cfg.Validate(); err != nil {
@@ -125,13 +125,13 @@ func TestCloudDrivers(t *testing.T) {
 func TestInvalidCloudDrivers(t *testing.T) {
 	for name, cfg := range map[string]driver{
 		"s3 bucket":       s3blob.Config{Bucket: "Bad_Bucket"},
-		"s3 endpoint":     s3blob.Config{Bucket: "dinki", Endpoint: "minio:9000"},
-		"s3 sse":          s3blob.Config{Bucket: "dinki", SSEType: "rot13"},
-		"s3 kms no sse":   s3blob.Config{Bucket: "dinki", KMSKeyID: "k"},
-		"s3 prefix":       s3blob.Config{Bucket: "dinki", Prefix: "/abs"},
+		"s3 endpoint":     s3blob.Config{Bucket: "registry-test", Endpoint: "minio:9000"},
+		"s3 sse":          s3blob.Config{Bucket: "registry-test", SSEType: "rot13"},
+		"s3 kms no sse":   s3blob.Config{Bucket: "registry-test", KMSKeyID: "k"},
+		"s3 prefix":       s3blob.Config{Bucket: "registry-test", Prefix: "/abs"},
 		"gcs bucket":      gcsblob.Config{},
 		"azure container": azureblob.Config{Container: "Bad--name"},
-		"azure protocol":  azureblob.Config{Container: "dinki", Protocol: "ftp"},
+		"azure protocol":  azureblob.Config{Container: "registry-test", Protocol: "ftp"},
 	} {
 		if err := cfg.Validate(); err == nil {
 			t.Errorf("%s: Validate() = nil, want error", name)

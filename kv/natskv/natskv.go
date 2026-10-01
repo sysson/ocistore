@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	opHeader = "Dinki-Op"
+	opHeader = "Ocistore-Op"
 	opDelete = "DEL"
 	// tombstoneTTL bounds how long delete markers are retained. Once one
 	// expires the key is simply absent, which means the same thing.
@@ -35,7 +35,7 @@ const (
 )
 
 // Options configure the stream a store keeps its data in. Zero values use
-// the defaults: stream DINKI_METADATA, subject dinki.metadata, one replica.
+// the defaults: stream OCISTORE_METADATA, subject ocistore.metadata, one replica.
 type Options struct {
 	Stream   string `json:"stream,omitempty"`
 	Subject  string `json:"subject,omitempty"`
@@ -115,7 +115,7 @@ func (c Config) Open(ctx context.Context) (kv.Store, error) {
 		normalized, _ := serverURL(server)
 		servers = append(servers, normalized)
 	}
-	natsOpts := []nats.Option{nats.Name("dinki"), nats.MaxReconnects(-1)}
+	natsOpts := []nats.Option{nats.Name("ocistore"), nats.MaxReconnects(-1)}
 	if c.CredentialsFile != "" {
 		natsOpts = append(natsOpts, nats.UserCredentials(c.CredentialsFile))
 	}
@@ -143,10 +143,10 @@ func (c Config) Open(ctx context.Context) (kv.Store, error) {
 // The connection is not closed by the store.
 func New(ctx context.Context, nc *nats.Conn, opts Options) (*remotekv.Store, error) {
 	if opts.Stream == "" {
-		opts.Stream = "DINKI_METADATA"
+		opts.Stream = "OCISTORE_METADATA"
 	}
 	if opts.Subject == "" {
-		opts.Subject = "dinki.metadata"
+		opts.Subject = "ocistore.metadata"
 	}
 	if opts.Replicas == 0 {
 		opts.Replicas = 1
@@ -157,7 +157,7 @@ func New(ctx context.Context, nc *nats.Conn, opts Options) (*remotekv.Store, err
 	}
 	stream, err := js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
 		Name:               opts.Stream,
-		Description:        "dinki registry metadata",
+		Description:        "ocistore registry metadata",
 		Subjects:           []string{opts.Subject + ".>"},
 		MaxMsgsPerSubject:  1,
 		Discard:            jetstream.DiscardOld,

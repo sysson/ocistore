@@ -90,7 +90,7 @@ func TestClientConfigNormalizesEndpoints(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if fmt.Sprint(cfg.Endpoints) != "[https://a:2379 https://b:2379]" || prefix != "/dinki" || cfg.TLS == nil {
+	if fmt.Sprint(cfg.Endpoints) != "[https://a:2379 https://b:2379]" || prefix != "/ocistore" || cfg.TLS == nil {
 		t.Fatalf("ClientConfig() = %v, %q, tls %v", cfg.Endpoints, prefix, cfg.TLS != nil)
 	}
 }

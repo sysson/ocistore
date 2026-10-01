@@ -59,7 +59,7 @@ const (
 	pendingUpload      = "upload"
 	pendingReservation = "reservation"
 
-	schemaVersion = "2"
+	schemaVersion = "1"
 )
 
 // Store is the metadata store over a kv.Store.
@@ -87,9 +87,6 @@ func New(ctx context.Context, store kv.Store) (*Store, error) {
 		if err != nil {
 			return err
 		}
-		if string(value) == "1" {
-			return migrateV1(ctx, tx)
-		}
 		if string(value) != schemaVersion {
 			return fmt.Errorf("unsupported registry metadata schema %q (want %s)", value, schemaVersion)
 		}
@@ -99,29 +96,6 @@ func New(ctx context.Context, store kv.Store) (*Store, error) {
 		return nil, fmt.Errorf("initializing registry metadata: %w", err)
 	}
 	return s, nil
-}
-
-// migrateV1 builds the pending index, which schema 1 did not have.
-func migrateV1(ctx context.Context, tx kv.Txn) error {
-	if err := tx.Scan(ctx, kv.Prefix(nsUpload), "", func(_ string, value []byte) (bool, error) {
-		var session backend.UploadSession
-		if err := json.Unmarshal(value, &session); err != nil {
-			return false, fmt.Errorf("decoding registry upload metadata: %w", err)
-		}
-		return true, tx.Put(kv.Key(nsPending, session.Repository, pendingUpload, string(session.ID)), nil)
-	}); err != nil {
-		return err
-	}
-	if err := tx.Scan(ctx, kv.Prefix(nsReservation), "", func(_ string, value []byte) (bool, error) {
-		var reservation backend.ContentReservation
-		if err := json.Unmarshal(value, &reservation); err != nil {
-			return false, fmt.Errorf("decoding registry reservation metadata: %w", err)
-		}
-		return true, tx.Put(kv.Key(nsPending, reservation.Repository, pendingReservation, reservation.ID), nil)
-	}); err != nil {
-		return err
-	}
-	return tx.Put(kv.Key(nsSchema), []byte(schemaVersion))
 }
 
 // Open opens the kv driver cfg selects and returns a metadata store over it.

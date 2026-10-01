@@ -1,4 +1,4 @@
-// Package query is dinki's GraphQL metadata query layer. It resolves queries
+// Package query is ocistore's GraphQL metadata query layer. It resolves queries
 // from the indexed metadata store (repositories, tags, manifests, blobs,
 // dependents, locations, referrers) and reads image config blobs from content
 // storage for history and inspect. It is read-only: deletion is always done
@@ -45,7 +45,7 @@ const (
 	queryCacheSize = 256
 )
 
-// Service executes GraphQL queries against dinki metadata.
+// Service executes GraphQL queries against ocistore metadata.
 type Service struct {
 	exec *executor.Executor
 }

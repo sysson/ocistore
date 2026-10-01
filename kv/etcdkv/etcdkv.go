@@ -23,7 +23,7 @@ import (
 // opsPerTxn stays below etcd's default --max-txn-ops of 128.
 const opsPerTxn = 100
 
-const defaultPrefix = "/dinki"
+const defaultPrefix = "/ocistore"
 
 // Config selects the etcd driver.
 type Config struct {
@@ -31,7 +31,7 @@ type Config struct {
 	// addresses use https when TLS is set and http otherwise.
 	Endpoints []string `json:"endpoints"`
 	// Prefix is the key prefix the store keeps its data under (default
-	// /dinki).
+	// /ocistore).
 	Prefix string `json:"prefix,omitempty"`
 	// Username and PasswordFile, set together, enable etcd authentication.
 	Username     string        `json:"username,omitempty"`
