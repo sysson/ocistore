@@ -1,0 +1,180 @@
+# Dinki metadata query schema. Every field reads the metadata indexes; only
+# ImageConfig reads a (small) config blob from content storage. Results are
+# snapshots: they never authorize deletion, which garbage collection re-checks.
+schema {
+  query: Query
+}
+
+scalar Time
+scalar Long
+
+type Query {
+  # Repositories sorted by name, strictly after `after`.
+  repositories(first: Int = 100, after: String): [Repository!]!
+  # A repository, or null if it does not exist.
+  repository(name: String!): Repository
+  # A manifest named by tag or digest in repository, or null.
+  image(repository: String!, reference: String!): Manifest
+  # A manifest by digest in repository, or null.
+  manifest(repository: String!, digest: String!): Manifest
+  # Registry-wide view of a digest: where it lives and what references it.
+  content(digest: String!): Content!
+}
+
+type Repository {
+  name: String!
+  tags(first: Int = 100, after: String): [Tag!]!
+  manifests(first: Int = 100, after: String): [Manifest!]!
+  blobs(first: Int = 100, after: String): [Blob!]!
+}
+
+type Tag {
+  repository: String!
+  name: String!
+  digest: String!
+  updatedAt: Time!
+  manifest: Manifest
+}
+
+type Manifest {
+  repository: String!
+  digest: String!
+  mediaType: String!
+  size: Long!
+  artifactType: String
+  annotations: [Annotation!]!
+  pushedAt: Time
+  # Tags in this repository currently naming the manifest.
+  tags: [String!]!
+  # Image manifests only.
+  config: Descriptor
+  layers: [Descriptor!]!
+  # Index children only.
+  manifests: [Descriptor!]!
+  # The manifest this one is an artifact for (OCI subject), if any.
+  subject: Descriptor
+  referrers(artifactType: String, first: Int = 100, after: String): [Descriptor!]!
+  # Manifests in any repository that directly reference this one.
+  dependents(first: Int = 100): [Dependent!]!
+  # This manifest and everything it transitively references in repository,
+  # each flagged with whether anything outside the closure still needs it.
+  closure: [ClosureEntry!]!
+  # The parsed image config for image manifests, or null.
+  imageConfig: ImageConfig
+}
+
+type Descriptor {
+  digest: String!
+  mediaType: String!
+  size: Long!
+  artifactType: String
+  annotations: [Annotation!]!
+  urls: [String!]!
+  platform: Platform
+  # The manifest this descriptor names in the same repository, if present.
+  manifest: Manifest
+}
+
+type Platform {
+  os: String!
+  architecture: String!
+  variant: String
+  osVersion: String
+  osFeatures: [String!]!
+}
+
+type Annotation {
+  key: String!
+  value: String!
+}
+
+type Blob {
+  repository: String!
+  digest: String!
+  mediaType: String
+  size: Long!
+  pushedAt: Time
+  dependents(first: Int = 100): [Dependent!]!
+}
+
+type Dependent {
+  repository: String!
+  digest: String!
+  manifest: Manifest
+}
+
+enum ContentKind {
+  BLOB
+  MANIFEST
+}
+
+type Location {
+  repository: String!
+  kind: ContentKind!
+}
+
+type Content {
+  digest: String!
+  # True if an upload or push currently holds the digest.
+  reserved: Boolean!
+  locations: [Location!]!
+  dependents(first: Int = 100): [Dependent!]!
+  # False when nothing retains the digest, so GC may collect it.
+  referenced: Boolean!
+}
+
+enum ClosureRole {
+  MANIFEST
+  CONFIG
+  LAYER
+}
+
+type ClosureEntry {
+  digest: String!
+  role: ClosureRole!
+  mediaType: String!
+  size: Long!
+  # True if removing the closure from this repository must keep the digest
+  # there: a manifest in this repository outside the closure references it,
+  # or it is a non-root manifest that is itself tagged. The root's own tags
+  # are not counted; read Manifest.tags for those.
+  retainedInRepository: Boolean!
+  # True if the content outlives removal of the closure from this
+  # repository: it is retained here, referenced by a manifest in another
+  # repository, or present in another repository.
+  shared: Boolean!
+  # Manifests outside the closure, in any repository, referencing the digest.
+  sharedWith: [Dependent!]!
+  # Every repository holding the digest, including this one.
+  locations: [Location!]!
+}
+
+type ImageConfig {
+  digest: String!
+  created: Time
+  author: String
+  architecture: String
+  os: String
+  variant: String
+  user: String
+  workingDir: String
+  env: [String!]!
+  entrypoint: [String!]!
+  cmd: [String!]!
+  labels: [Annotation!]!
+  exposedPorts: [String!]!
+  volumes: [String!]!
+  stopSignal: String
+  diffIds: [String!]!
+  history: [History!]!
+  # The raw config JSON, for inspect.
+  raw: String!
+}
+
+type History {
+  created: Time
+  createdBy: String
+  author: String
+  comment: String
+  emptyLayer: Boolean!
+}

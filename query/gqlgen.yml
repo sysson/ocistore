@@ -1,0 +1,52 @@
+# gqlgen configuration for the ocistore metadata query layer. Regenerate with
+# `go generate ./query`. Every GraphQL type is bound to a
+# hand-written model in this package whose methods resolve its fields, so only
+# generated.go is produced.
+schema:
+  - schema.graphql
+
+exec:
+  filename: generated.go
+  package: query
+  # Bound on concurrently resolved list elements per field.
+  worker_limit: 16
+
+skip_mod_tidy: true
+
+models:
+  Int:
+    model: github.com/99designs/gqlgen/graphql.Int32
+  Long:
+    model: github.com/99designs/gqlgen/graphql.Int64
+  Time:
+    model: github.com/99designs/gqlgen/graphql.Time
+  ContentKind:
+    model: github.com/99designs/gqlgen/graphql.String
+  ClosureRole:
+    model: github.com/99designs/gqlgen/graphql.String
+  Repository:
+    model: github.com/sysson/ocistore/query.Repository
+  Tag:
+    model: github.com/sysson/ocistore/query.Tag
+  Manifest:
+    model: github.com/sysson/ocistore/query.Manifest
+  Descriptor:
+    model: github.com/sysson/ocistore/query.Descriptor
+  Platform:
+    model: github.com/sysson/ocistore/query.Platform
+  Annotation:
+    model: github.com/sysson/ocistore/query.Annotation
+  Blob:
+    model: github.com/sysson/ocistore/query.Blob
+  Dependent:
+    model: github.com/sysson/ocistore/query.Dependent
+  Location:
+    model: github.com/sysson/ocistore/query.Location
+  Content:
+    model: github.com/sysson/ocistore/query.Content
+  ClosureEntry:
+    model: github.com/sysson/ocistore/query.ClosureEntry
+  ImageConfig:
+    model: github.com/sysson/ocistore/query.ImageConfig
+  History:
+    model: github.com/sysson/ocistore/query.History
