@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -16,25 +15,40 @@ import (
 	"github.com/docker/oci/ociref"
 	"github.com/sysson/ocistore/backend"
 	"github.com/sysson/ocistore/blobstore"
-	"github.com/sysson/syskit/logx"
 )
 
 type Store struct {
 	*oci.Funcs
-	content  backend.ContentStore
-	metadata Metadata
+	content                      backend.ContentStore
+	metadata                     Metadata
+	manifestParsers              []ManifestParser
+	allowMissingManifestChildren bool
 }
 
 var _ oci.Interface = (*Store)(nil)
 
-func New(content backend.ContentStore, metadata Metadata) (*Store, error) {
+func New(content backend.ContentStore, metadata Metadata, options ...Option) (*Store, error) {
 	if content == nil {
 		return nil, errors.New("registry content store is required")
 	}
 	if metadata == nil {
 		return nil, errors.New("registry metadata store is required")
 	}
-	r := &Store{content: content, metadata: metadata}
+	configured := storeOptions{}
+	for _, option := range options {
+		if option == nil {
+			return nil, errors.New("registry option is required")
+		}
+		if err := option(&configured); err != nil {
+			return nil, err
+		}
+	}
+	r := &Store{
+		content:                      content,
+		metadata:                     metadata,
+		manifestParsers:              configured.manifestParsers,
+		allowMissingManifestChildren: configured.allowMissingManifestChildren,
+	}
 	r.Funcs = &oci.Funcs{
 		GetBlob_:               r.getBlob,
 		GetBlobRange_:          r.getBlobRange,
@@ -326,14 +340,14 @@ func (r *Store) pushManifest(ctx context.Context, repository string, content []b
 		}
 		digest = params.Digest
 	}
-	manifest, references, subject, artifactType, err := parseManifest(mediaType, content)
+	manifest, err := r.parseManifest(mediaType, content)
 	if err != nil {
 		return oci.Descriptor{}, err
 	}
 	if err := r.validateManifestDependencies(ctx, repository, manifest); err != nil {
 		return oci.Descriptor{}, err
 	}
-	desc := oci.Descriptor{Digest: digest, MediaType: mediaType, Size: int64(len(content)), ArtifactType: artifactType}
+	desc := oci.Descriptor{Digest: digest, MediaType: mediaType, Size: int64(len(content)), ArtifactType: manifest.ArtifactType}
 	tags := []string(nil)
 	if params != nil {
 		tags = params.Tags
@@ -350,16 +364,33 @@ func (r *Store) pushManifest(ctx context.Context, repository string, content []b
 	if err := r.content.PutBlob(ctx, digest, desc.Size, bytes.NewReader(content)); err != nil {
 		return oci.Descriptor{}, errors.Join(err, r.metadata.ReleaseReservation(context.WithoutCancel(ctx), reservation))
 	}
+	dependencies := manifestDependencies(manifest)
+	references := make([]oci.Digest, 0, len(dependencies)+len(manifest.Manifests))
+	seenReferences := make(map[oci.Digest]bool)
+	for _, dependency := range dependencies {
+		if !seenReferences[dependency.Digest] {
+			references = append(references, dependency.Digest)
+			seenReferences[dependency.Digest] = true
+		}
+	}
+	for _, child := range manifest.Manifests {
+		if !seenReferences[child.Digest] {
+			references = append(references, child.Digest)
+			seenReferences[child.Digest] = true
+		}
+	}
 	_, err = r.metadata.PutManifest(ctx, reservation, backend.ManifestRecord{
 		Descriptor:   desc,
 		References:   references,
-		Subject:      subject,
-		ArtifactType: artifactType,
+		Subject:      manifest.Subject,
+		ArtifactType: manifest.ArtifactType,
 		Tags:         tags,
 		Config:       manifest.Config,
 		Layers:       manifest.Layers,
 		Manifests:    manifest.Manifests,
 		Annotations:  manifest.Annotations,
+		Dependencies: dependencies,
+		Details:      manifest.Details,
 	})
 	if err != nil {
 		_ = r.metadata.ReleaseReservation(context.WithoutCancel(ctx), reservation)
@@ -368,62 +399,41 @@ func (r *Store) pushManifest(ctx context.Context, repository string, content []b
 	return desc, nil
 }
 
-func parseManifest(mediaType string, content []byte) (oci.IndexOrManifest, []oci.Digest, *oci.Digest, string, error) {
-	var manifest oci.IndexOrManifest
-	if err := json.Unmarshal(content, &manifest); err != nil {
-		return oci.IndexOrManifest{}, nil, nil, "", fmt.Errorf("decoding manifest: %w", err)
+func manifestDependencies(manifest ManifestMetadata) []oci.Descriptor {
+	dependencies := make([]oci.Descriptor, 0, len(manifest.Dependencies)+len(manifest.Layers)+1)
+	seen := make(map[oci.Digest]bool)
+	add := func(descriptor oci.Descriptor) {
+		if len(descriptor.URLs) == 0 && !seen[descriptor.Digest] {
+			dependencies = append(dependencies, descriptor)
+			seen[descriptor.Digest] = true
+		}
 	}
-	switch mediaType {
-	case oci.MediaTypeImageManifest, oci.MediaTypeDockerManifest,
-		oci.MediaTypeImageIndex, oci.MediaTypeDockerManifestList:
-		if manifest.MediaType == "" {
-			manifest.MediaType = mediaType
-		}
-		if manifest.MediaType != mediaType {
-			return oci.IndexOrManifest{}, nil, nil, "", fmt.Errorf("manifest media type %q does not match Content-Type %q", manifest.MediaType, mediaType)
-		}
-		if err := manifest.Validate(); err != nil {
-			return oci.IndexOrManifest{}, nil, nil, "", fmt.Errorf("invalid manifest: %w", err)
-		}
-	default:
-		return manifest, nil, nil, manifest.ArtifactType, nil
-	}
-	references := make([]oci.Digest, 0, len(manifest.Manifests)+len(manifest.Layers)+1)
-	for _, descriptor := range manifest.Manifests {
-		references = append(references, descriptor.Digest)
-	}
-	for _, descriptor := range manifest.Layers {
-		if len(descriptor.URLs) > 0 {
-			continue
-		}
-		references = append(references, descriptor.Digest)
+	for _, descriptor := range manifest.Dependencies {
+		add(descriptor)
 	}
 	if manifest.Config != nil {
-		references = append(references, manifest.Config.Digest)
+		add(*manifest.Config)
 	}
-	var subject *oci.Digest
-	if manifest.Subject != nil {
-		digest := manifest.Subject.Digest
-		subject = &digest
+	for _, descriptor := range manifest.Layers {
+		add(descriptor)
 	}
-	artifactType := manifest.ArtifactType
-	if artifactType == "" && manifest.Config != nil {
-		artifactType = manifest.Config.MediaType
-	}
-	return manifest, references, subject, artifactType, nil
+	return dependencies
 }
 
-func (r *Store) validateManifestDependencies(ctx context.Context, repository string, manifest oci.IndexOrManifest) error {
+func (r *Store) validateManifestDependencies(ctx context.Context, repository string, manifest ManifestMetadata) error {
 	for _, descriptor := range manifest.Manifests {
 		if err := validateDescriptor(descriptor); err != nil {
 			return err
 		}
-		// Index children may be absent (for example after a single-platform
-		// pull); children that are present must match their descriptor.
+		// Present child manifests must match their descriptor. Missing children
+		// are accepted only when explicitly enabled for partial pulls.
 		stored, err := r.metadata.Manifest(ctx, repository, descriptor.Digest)
 		if err != nil {
 			if errors.Is(err, oci.ErrNameUnknown) || errors.Is(err, oci.ErrManifestUnknown) {
-				continue
+				if r.allowMissingManifestChildren {
+					continue
+				}
+				return fmt.Errorf("referenced manifest %s not found: %w", descriptor.Digest, oci.ErrManifestUnknown)
 			}
 			return err
 		}
@@ -431,12 +441,7 @@ func (r *Store) validateManifestDependencies(ctx context.Context, repository str
 			return fmt.Errorf("referenced manifest size mismatch: %w", oci.ErrSizeInvalid)
 		}
 	}
-	references := make([]oci.Descriptor, 0, len(manifest.Layers)+1)
-	references = append(references, manifest.Layers...)
-	if manifest.Config != nil {
-		references = append(references, *manifest.Config)
-	}
-	for _, descriptor := range references {
+	for _, descriptor := range manifestDependencies(manifest) {
 		if err := validateDescriptor(descriptor); err != nil {
 			return err
 		}
@@ -455,7 +460,7 @@ func (r *Store) validateManifestDependencies(ctx context.Context, repository str
 		}
 	}
 	if manifest.Subject != nil {
-		if err := validateDescriptor(*manifest.Subject); err != nil {
+		if err := validateDescriptor(oci.Descriptor{Digest: *manifest.Subject}); err != nil {
 			return fmt.Errorf("invalid subject descriptor: %w", err)
 		}
 	}
@@ -680,13 +685,6 @@ func (w *uploadWriter) Commit(digest oci.Digest) (oci.Descriptor, error) {
 	}
 	if err := w.registry.metadata.RecordBlob(w.ctx, reservation); err != nil {
 		return oci.Descriptor{}, errors.Join(err, w.registry.metadata.ReleaseReservation(context.WithoutCancel(w.ctx), reservation))
-	}
-	cleanupErr := errors.Join(
-		w.registry.content.CancelUpload(context.WithoutCancel(w.ctx), w.id),
-		w.registry.metadata.DeleteUpload(context.WithoutCancel(w.ctx), w.repository, w.id),
-	)
-	if cleanupErr != nil {
-		logx.G(w.ctx).WithError(cleanupErr).Error("cleaning completed blob upload", "repository", w.repository, "upload", w.id)
 	}
 	return desc, nil
 }

@@ -20,6 +20,8 @@ models:
     model: github.com/99designs/gqlgen/graphql.Int64
   Time:
     model: github.com/99designs/gqlgen/graphql.Time
+  JSON:
+    model: github.com/sysson/ocistore/query.JSON
   ContentKind:
     model: github.com/99designs/gqlgen/graphql.String
   ClosureRole:

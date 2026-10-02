@@ -109,9 +109,10 @@ func IsImageConfig(mediaType string) bool {
 type ClosureRole string
 
 const (
-	RoleManifest ClosureRole = "MANIFEST"
-	RoleConfig   ClosureRole = "CONFIG"
-	RoleLayer    ClosureRole = "LAYER"
+	RoleManifest  ClosureRole = "MANIFEST"
+	RoleConfig    ClosureRole = "CONFIG"
+	RoleLayer     ClosureRole = "LAYER"
+	RoleReference ClosureRole = "REFERENCE"
 )
 
 // ClosureEntry is a digest in a manifest closure, classified against
@@ -215,6 +216,14 @@ func (x *Index) walkClosure(ctx context.Context, repository string, root backend
 				continue
 			}
 			if err := add(closureMember{descriptor: layer, role: RoleLayer}); err != nil {
+				return nil, err
+			}
+		}
+		for _, dependency := range record.Dependencies {
+			if len(dependency.URLs) > 0 {
+				continue
+			}
+			if err := add(closureMember{descriptor: dependency, role: RoleReference}); err != nil {
 				return nil, err
 			}
 		}

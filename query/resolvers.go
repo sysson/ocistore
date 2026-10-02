@@ -48,8 +48,30 @@ func (r *resolver) Repository(ctx context.Context, name string) (*Repository, er
 }
 
 func (r *resolver) Image(ctx context.Context, repository, reference string) (*Manifest, error) {
+	return r.manifestReference(ctx, repository, reference)
+}
+
+func (r *resolver) Manifest(ctx context.Context, repository string, digest, reference *string) (*Manifest, error) {
+	if (digest == nil) == (reference == nil) {
+		return nil, errors.New("supply exactly one of digest or reference")
+	}
+	if reference != nil {
+		return r.manifestReference(ctx, repository, *reference)
+	}
+	parsed, err := parseDigest(*digest)
+	if err != nil {
+		return nil, err
+	}
+	return r.manifest(ctx, repository, parsed)
+}
+
+func (r *resolver) manifestReference(ctx context.Context, repository, reference string) (*Manifest, error) {
 	if strings.Contains(reference, ":") {
-		return r.Manifest(ctx, repository, reference)
+		parsed, err := parseDigest(reference)
+		if err != nil {
+			return nil, err
+		}
+		return r.manifest(ctx, repository, parsed)
 	}
 	descriptor, err := r.index.ResolveTag(ctx, repository, reference)
 	if err != nil {
@@ -59,14 +81,6 @@ func (r *resolver) Image(ctx context.Context, repository, reference string) (*Ma
 		return nil, err
 	}
 	return r.manifest(ctx, repository, descriptor.Digest)
-}
-
-func (r *resolver) Manifest(ctx context.Context, repository, digest string) (*Manifest, error) {
-	parsed, err := parseDigest(digest)
-	if err != nil {
-		return nil, err
-	}
-	return r.manifest(ctx, repository, parsed)
 }
 
 func (r *resolver) Content(_ context.Context, digest string) (*Content, error) {
@@ -237,6 +251,41 @@ func (m *Manifest) PushedAt() *time.Time       { return optionalTime(m.record.Pu
 func (m *Manifest) Tags() []string             { return nonNil(m.record.Tags) }
 func (m *Manifest) Layers() []*Descriptor      { return m.descriptors(m.record.Layers) }
 func (m *Manifest) Manifests() []*Descriptor   { return m.descriptors(m.record.Manifests) }
+
+func (m *Manifest) References() []*Descriptor {
+	references := make([]oci.Descriptor, 0, len(m.record.Dependencies)+len(m.record.Layers)+len(m.record.Manifests)+1)
+	seen := make(map[oci.Digest]bool)
+	add := func(descriptor oci.Descriptor) {
+		if len(descriptor.URLs) == 0 && !seen[descriptor.Digest] {
+			references = append(references, descriptor)
+			seen[descriptor.Digest] = true
+		}
+	}
+	for _, dependency := range m.record.Dependencies {
+		add(dependency)
+	}
+	if m.record.Config != nil {
+		add(*m.record.Config)
+	}
+	for _, layer := range m.record.Layers {
+		add(layer)
+	}
+	for _, child := range m.record.Manifests {
+		add(child)
+	}
+	return m.descriptors(references)
+}
+
+func (m *Manifest) Details() (JSON, error) {
+	if len(m.record.Details) == 0 {
+		return nil, nil
+	}
+	var details any
+	if err := json.Unmarshal(m.record.Details, &details); err != nil {
+		return nil, fmt.Errorf("decoding manifest details %s: %w", m.record.Descriptor.Digest, err)
+	}
+	return JSON(details), nil
+}
 
 func (m *Manifest) Config() *Descriptor {
 	if m.record.Config == nil {
