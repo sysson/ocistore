@@ -7,16 +7,18 @@ schema {
 
 scalar Time
 scalar Long
+scalar JSON
 
 type Query {
   # Repositories sorted by name, strictly after `after`.
   repositories(first: Int = 100, after: String): [Repository!]!
   # A repository, or null if it does not exist.
   repository(name: String!): Repository
-  # A manifest named by tag or digest in repository, or null.
+  # A manifest named by tag or digest in repository, or null. Supply exactly
+  # one of digest or reference.
+  manifest(repository: String!, digest: String, reference: String): Manifest
+  # Backwards-compatible image-oriented alias for manifest lookup.
   image(repository: String!, reference: String!): Manifest
-  # A manifest by digest in repository, or null.
-  manifest(repository: String!, digest: String!): Manifest
   # Registry-wide view of a digest: where it lives and what references it.
   content(digest: String!): Content!
 }
@@ -51,6 +53,10 @@ type Manifest {
   layers: [Descriptor!]!
   # Index children only.
   manifests: [Descriptor!]!
+  # All direct blob and child-manifest dependencies.
+  references: [Descriptor!]!
+  # Format-specific data returned by the registered manifest parser.
+  details: JSON
   # The manifest this one is an artifact for (OCI subject), if any.
   subject: Descriptor
   referrers(artifactType: String, first: Int = 100, after: String): [Descriptor!]!
@@ -127,6 +133,7 @@ enum ClosureRole {
   MANIFEST
   CONFIG
   LAYER
+  REFERENCE
 }
 
 type ClosureEntry {

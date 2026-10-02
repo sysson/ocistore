@@ -20,10 +20,12 @@ import (
 )
 
 const (
-	imageManifestType = "application/vnd.oci.image.manifest.v1+json"
-	indexType         = "application/vnd.oci.image.index.v1+json"
-	configType        = "application/vnd.oci.image.config.v1+json"
-	layerType         = "application/vnd.oci.image.layer.v1.tar+gzip"
+	imageManifestType  = "application/vnd.oci.image.manifest.v1+json"
+	indexType          = "application/vnd.oci.image.index.v1+json"
+	configType         = "application/vnd.oci.image.config.v1+json"
+	layerType          = "application/vnd.oci.image.layer.v1.tar+gzip"
+	customManifestType = "application/vnd.example.widget.manifest.v1+json"
+	customArtifactType = "application/vnd.example.widget.v1"
 )
 
 type fixture struct {
@@ -34,6 +36,10 @@ type fixture struct {
 }
 
 func newFixture(t *testing.T) *fixture {
+	return newFixtureWithOptions(t)
+}
+
+func newFixtureWithOptions(t *testing.T, options ...ocistore.Option) *fixture {
 	t.Helper()
 	ctx := context.Background()
 	content, err := (memblob.Config{}).Open(ctx)
@@ -46,7 +52,7 @@ func newFixture(t *testing.T) *fixture {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = metadata.Close() })
-	registry, err := ocistore.New(content, metadata)
+	registry, err := ocistore.New(content, metadata, options...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,6 +61,27 @@ func newFixture(t *testing.T) *fixture {
 		t.Fatal(err)
 	}
 	return &fixture{t: t, ctx: ctx, registry: registry, service: service}
+}
+
+type customManifestParser struct{}
+
+func (customManifestParser) Supports(mediaType, artifactType string) bool {
+	return mediaType == customManifestType && artifactType == customArtifactType
+}
+
+func (customManifestParser) ParseManifest(_ string, content []byte) (ocistore.ManifestMetadata, error) {
+	var value struct {
+		Dependency oci.Descriptor  `json:"dependency"`
+		Details    json.RawMessage `json:"details"`
+	}
+	if err := json.Unmarshal(content, &value); err != nil {
+		return ocistore.ManifestMetadata{}, err
+	}
+	return ocistore.ManifestMetadata{
+		ArtifactType: customArtifactType,
+		Dependencies: []oci.Descriptor{value.Dependency},
+		Details:      value.Details,
+	}, nil
 }
 
 func (f *fixture) blob(repo, mediaType string, data []byte) oci.Descriptor {
@@ -307,6 +334,88 @@ func TestIndexClosureAndContent(t *testing.T) {
 	}
 	if path(t, data, "unknown", "referenced") != false {
 		t.Fatal("unknown content referenced")
+	}
+}
+
+func TestCustomManifestParserAndGenericLookup(t *testing.T) {
+	f := newFixtureWithOptions(t, ocistore.WithManifestParser(customManifestParser{}))
+	dependency := f.blob("widgets", "application/vnd.example.widget.data", []byte("widget data"))
+	manifest := f.manifest("widgets", customManifestType, map[string]any{
+		"artifactType": customArtifactType,
+		"dependency":   dependency,
+		"details":      map[string]any{"format": "widget", "version": 2},
+	}, "latest")
+
+	data := f.query(`query($digest: String!) {
+		byTag: manifest(repository: "widgets", reference: "latest") {
+			digest artifactType details
+			references { digest mediaType }
+			closure { digest role }
+		}
+		byDigest: manifest(repository: "widgets", digest: $digest) { digest }
+	}`, map[string]any{"digest": string(manifest.Digest)})
+	byTag := path(t, data, "byTag")
+	if got := path(t, byTag, "digest"); got != string(manifest.Digest) {
+		t.Fatalf("tag lookup digest = %v, want %s", got, manifest.Digest)
+	}
+	if got := path(t, byTag, "artifactType"); got != customArtifactType {
+		t.Fatalf("artifactType = %v, want %s", got, customArtifactType)
+	}
+	if path(t, byTag, "details", "format") != "widget" || path(t, byTag, "details", "version") != float64(2) {
+		t.Fatalf("details = %v", path(t, byTag, "details"))
+	}
+	if path(t, byTag, "references", 0, "digest") != string(dependency.Digest) {
+		t.Fatalf("references = %v", path(t, byTag, "references"))
+	}
+	if path(t, byTag, "closure", 1, "digest") != string(dependency.Digest) || path(t, byTag, "closure", 1, "role") != "REFERENCE" {
+		t.Fatalf("closure = %v", path(t, byTag, "closure"))
+	}
+	if got := path(t, data, "byDigest", "digest"); got != string(manifest.Digest) {
+		t.Fatalf("digest lookup = %v, want %s", got, manifest.Digest)
+	}
+}
+
+func TestGenericManifestFallback(t *testing.T) {
+	f := newFixture(t)
+	dependency := f.blob("generic", "application/vnd.example.data", []byte("data"))
+	manifest := f.manifest("generic", imageManifestType, map[string]any{
+		"artifactType": customArtifactType,
+		"blobs":        []oci.Descriptor{dependency},
+		"details":      map[string]any{"format": "generic"},
+	}, "latest")
+
+	data := f.query(`{ manifest(repository: "generic", reference: "latest") {
+		digest artifactType details references { digest }
+	} }`, nil)
+	result := path(t, data, "manifest")
+	if path(t, result, "digest") != string(manifest.Digest) || path(t, result, "artifactType") != customArtifactType {
+		t.Fatalf("manifest = %v", result)
+	}
+	if path(t, result, "details", "details", "format") != "generic" {
+		t.Fatalf("raw details = %v", path(t, result, "details"))
+	}
+	if path(t, result, "references", 0, "digest") != string(dependency.Digest) {
+		t.Fatalf("references = %v", path(t, result, "references"))
+	}
+	if err := f.registry.DeleteBlob(f.ctx, "generic", dependency.Digest); err == nil {
+		t.Fatal("deleting a referenced dependency succeeded")
+	}
+	referenced := f.query(`query($digest: String!) { content(digest: $digest) { referenced } }`, map[string]any{"digest": string(dependency.Digest)})
+	if path(t, referenced, "content", "referenced") != true {
+		t.Fatal("manifest dependency was collected while its manifest remained")
+	}
+	if err := f.registry.DeleteManifest(f.ctx, "generic", manifest.Digest); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.registry.DeleteBlob(f.ctx, "generic", dependency.Digest); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.registry.CollectGarbage(f.ctx); err != nil {
+		t.Fatal(err)
+	}
+	unreferenced := f.query(`query($digest: String!) { content(digest: $digest) { referenced } }`, map[string]any{"digest": string(dependency.Digest)})
+	if path(t, unreferenced, "content", "referenced") != false {
+		t.Fatal("manifest dependency remained referenced after manifest deletion")
 	}
 }
 

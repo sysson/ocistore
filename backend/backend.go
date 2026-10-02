@@ -4,6 +4,7 @@ package backend
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"time"
@@ -115,12 +116,15 @@ type ContentReservation struct {
 // its content, so metadata queries never need to read manifest bytes.
 // References are the manifest's direct blob and child-manifest dependencies
 // held by the registry (descriptors with external URLs are excluded), not its
-// transitive closure. Subject is the optional OCI subject relationship used to
-// index referrers. On PutManifest, Tags are installed atomically with the
+// transitive closure. Dependencies retain descriptors for direct blob
+// references, including formats that do not use image layers. Details stores
+// parser-specific JSON. Subject is the optional OCI subject relationship used
+// to index referrers. On PutManifest, Tags are installed atomically with the
 // record; on reads they are the tags currently pointing at the manifest.
 type ManifestRecord struct {
 	Descriptor   oci.Descriptor
 	References   []oci.Digest
+	Dependencies []oci.Descriptor
 	Subject      *oci.Digest
 	ArtifactType string
 	Tags         []string
@@ -130,6 +134,7 @@ type ManifestRecord struct {
 	Layers      []oci.Descriptor  `json:",omitempty"`
 	Manifests   []oci.Descriptor  `json:",omitempty"`
 	Annotations map[string]string `json:",omitempty"`
+	Details     json.RawMessage   `json:",omitempty"`
 	PushedAt    time.Time
 }
 

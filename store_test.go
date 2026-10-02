@@ -3,6 +3,7 @@ package ocistore
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"path/filepath"
 	"testing"
@@ -11,9 +12,59 @@ import (
 	"github.com/docker/oci/ocidigest"
 	"github.com/sysson/ocistore/blobstore"
 	"github.com/sysson/ocistore/blobstore/fileblob"
+	"github.com/sysson/ocistore/blobstore/memblob"
 	"github.com/sysson/ocistore/kv/boltkv"
+	"github.com/sysson/ocistore/kv/memkv"
 	"github.com/sysson/ocistore/kvmeta"
 )
+
+func TestPushManifestMissingChildrenPolicy(t *testing.T) {
+	ctx := context.Background()
+	newRegistry := func(options ...Option) *Store {
+		t.Helper()
+		content, err := (memblob.Config{}).Open(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = content.Close() })
+		metadata, err := kvmeta.New(ctx, memkv.New())
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = metadata.Close() })
+		registry, err := New(content, metadata, options...)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return registry
+	}
+
+	childBytes := []byte("not pushed yet")
+	child := oci.Descriptor{
+		MediaType: oci.MediaTypeImageManifest,
+		Digest:    ocidigest.FromBytes(childBytes),
+		Size:      int64(len(childBytes)),
+	}
+	manifest, err := json.Marshal(map[string]any{
+		"schemaVersion": 2,
+		"mediaType":     oci.MediaTypeImageIndex,
+		"manifests":     []oci.Descriptor{child},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	push := func(registry *Store) error {
+		_, err := registry.PushManifest(ctx, "team/app", manifest, oci.MediaTypeImageIndex, nil)
+		return err
+	}
+
+	if err := push(newRegistry()); !errors.Is(err, oci.ErrManifestUnknown) {
+		t.Fatalf("strict push error = %v, want ErrManifestUnknown", err)
+	}
+	if err := push(newRegistry(WithAllowMissingManifestChildren())); err != nil {
+		t.Fatalf("lax push failed: %v", err)
+	}
+}
 
 func TestBlobDeleteAndGarbageCollection(t *testing.T) {
 	ctx := context.Background()

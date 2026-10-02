@@ -73,8 +73,12 @@ Add `"net/http"` and `"github.com/docker/oci/ociserver"` to the imports. The ser
 - `blobstore`: blob storage via Go CDK, with `fileblob`, `memblob`, `s3blob`, `gcsblob`, and `azureblob` drivers.
 - `kv`: transactional key/value storage, with `boltkv`, `memkv`, `etcdkv`, and `natskv` drivers; `remotekv` provides remote KV support.
 - `kvmeta`: indexed metadata storage over a `kv.Store`.
-- `query`: read-only GraphQL queries over `store.Index()`; `query.New(index)` returns a service with `Exec` and `ServeHTTP` methods.
+- [`query` package guide](query/README.md): read-only GraphQL queries over `store.Index()`, with in-process and HTTP examples.
 
 Call `store.CollectGarbage(ctx)` to remove unreferenced content after deletions. With the bundled Go CDK blobstore, it also scans stored blobs for objects left behind by interrupted writes; custom content backends can support this by implementing `backend.ContentLister`. Scanning the full bucket can be expensive on large stores.
 
 `store.CleanupExpiredUploads(ctx, cutoff)` and `store.CleanupExpiredReservations(ctx, cutoff)` clear abandoned metadata and uploads. For a Go CDK blobstore, `content.CleanupStaged(ctx, cutoff)` removes `pending/` objects from interrupted writes. Choose cutoffs older than any operation that may still be active, and invoke these methods as appropriate for your deployment; no background cleanup is started automatically.
+
+## Manifest parsers
+
+`ocistore.New` accepts optional `ocistore.WithManifestParser` handlers. A handler matches both manifest media type and artifact type, then returns normalized `ManifestMetadata`: blob dependencies, child manifests, subject, annotations, and optional JSON `Details`. Blob dependencies are validated and indexed for garbage collection; details are available from GraphQL as the `Manifest.details` JSON scalar. Unhandled formats use the generic parser for common OCI fields such as `blobs`, `manifests`, and `subject`. Missing child manifests are rejected by default; add `ocistore.WithAllowMissingManifestChildren()` for partial pulls. Image config/history remain available through the image-specific `imageConfig` field. GraphQL `manifest` resolves by digest or tag; `image` remains as a compatibility alias.

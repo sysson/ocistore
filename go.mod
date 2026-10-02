@@ -8,7 +8,7 @@ require (
 	github.com/nats-io/nats-server/v2 v2.15.0
 	github.com/nats-io/nats.go v1.54.0
 	github.com/synadia-io/orbit.go/jetstreamext v0.3.2
-	github.com/sysson/syskit v1.5.2
+	github.com/vektah/gqlparser/v2 v2.5.59
 	go.etcd.io/bbolt v1.5.0
 	go.etcd.io/etcd/client/v3 v3.7.2
 	go.etcd.io/etcd/server/v3 v3.7.2
@@ -104,7 +104,6 @@ require (
 	github.com/synadia-io/orbit.go/natsext v0.1.3 // indirect
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20220101234140-673ab2c3ae75 // indirect
 	github.com/urfave/cli/v3 v3.11.0 // indirect
-	github.com/vektah/gqlparser/v2 v2.5.37 // indirect
 	github.com/xiang90/probing v0.0.0-20221125231312-a49e3df8f510 // indirect
 	go.etcd.io/etcd/api/v3 v3.7.2 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.7.2 // indirect

@@ -126,12 +126,14 @@ type ComplexityRoot struct {
 		Closure      func(childComplexity int) int
 		Config       func(childComplexity int) int
 		Dependents   func(childComplexity int, first *int32) int
+		Details      func(childComplexity int) int
 		Digest       func(childComplexity int) int
 		ImageConfig  func(childComplexity int) int
 		Layers       func(childComplexity int) int
 		Manifests    func(childComplexity int) int
 		MediaType    func(childComplexity int) int
 		PushedAt     func(childComplexity int) int
+		References   func(childComplexity int) int
 		Referrers    func(childComplexity int, artifactType *string, first *int32, after *string) int
 		Repository   func(childComplexity int) int
 		Size         func(childComplexity int) int
@@ -150,7 +152,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Content      func(childComplexity int, digest string) int
 		Image        func(childComplexity int, repository string, reference string) int
-		Manifest     func(childComplexity int, repository string, digest string) int
+		Manifest     func(childComplexity int, repository string, digest *string, reference *string) int
 		Repositories func(childComplexity int, first *int32, after *string) int
 		Repository   func(childComplexity int, name string) int
 	}
@@ -178,8 +180,8 @@ type ComplexityRoot struct {
 type QueryResolver interface {
 	Repositories(ctx context.Context, first *int32, after *string) ([]*Repository, error)
 	Repository(ctx context.Context, name string) (*Repository, error)
+	Manifest(ctx context.Context, repository string, digest *string, reference *string) (*Manifest, error)
 	Image(ctx context.Context, repository string, reference string) (*Manifest, error)
-	Manifest(ctx context.Context, repository string, digest string) (*Manifest, error)
 	Content(ctx context.Context, digest string) (*Content, error)
 }
 
@@ -597,6 +599,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Manifest.Dependents(childComplexity, args["first"].(*int32)), true
+	case "Manifest.details":
+		if e.ComplexityRoot.Manifest.Details == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Manifest.Details(childComplexity), true
 	case "Manifest.digest":
 		if e.ComplexityRoot.Manifest.Digest == nil {
 			break
@@ -633,6 +641,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Manifest.PushedAt(childComplexity), true
+	case "Manifest.references":
+		if e.ComplexityRoot.Manifest.References == nil {
+			break
+		}
+
+		return e.ComplexityRoot.Manifest.References(childComplexity), true
 	case "Manifest.referrers":
 		if e.ComplexityRoot.Manifest.Referrers == nil {
 			break
@@ -733,7 +747,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Query.Manifest(childComplexity, args["repository"].(string), args["digest"].(string)), true
+		return e.ComplexityRoot.Query.Manifest(childComplexity, args["repository"].(string), args["digest"].(*string), args["reference"].(*string)), true
 	case "Query.repositories":
 		if e.ComplexityRoot.Query.Repositories == nil {
 			break
@@ -1106,6 +1120,10 @@ func (ec *executionContext) childFields_Manifest(ctx context.Context, field grap
 		return ec.fieldContext_Manifest_layers(ctx, field)
 	case "manifests":
 		return ec.fieldContext_Manifest_manifests(ctx, field)
+	case "references":
+		return ec.fieldContext_Manifest_references(ctx, field)
+	case "details":
+		return ec.fieldContext_Manifest_details(ctx, field)
 	case "subject":
 		return ec.fieldContext_Manifest_subject(ctx, field)
 	case "referrers":
@@ -1416,13 +1434,21 @@ func (ec *executionContext) field_Query_manifest_args(ctx context.Context, rawAr
 	}
 	args["repository"] = arg0
 	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "digest",
-		func(ctx context.Context, v any) (string, error) {
-			return ec.unmarshalNString2string(ctx, v)
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOString2ᚖstring(ctx, v)
 		})
 	if err != nil {
 		return nil, err
 	}
 	args["digest"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "reference",
+		func(ctx context.Context, v any) (*string, error) {
+			return ec.unmarshalOString2ᚖstring(ctx, v)
+		})
+	if err != nil {
+		return nil, err
+	}
+	args["reference"] = arg2
 	return args, nil
 }
 
@@ -3311,6 +3337,61 @@ func (ec *executionContext) fieldContext_Manifest_manifests(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Manifest_references(ctx context.Context, field graphql.CollectedField, obj *Manifest) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Manifest_references(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.References(), nil
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v []*Descriptor) graphql.Marshaler {
+			return ec.marshalNDescriptor2ᚕᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐDescriptorᚄ(ctx, selections, v)
+		},
+		true,
+		true,
+	)
+}
+func (ec *executionContext) fieldContext_Manifest_references(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Manifest",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Descriptor(ctx, field)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Manifest_details(ctx context.Context, field graphql.CollectedField, obj *Manifest) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Manifest_details(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			return obj.Details()
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v JSON) graphql.Marshaler {
+			return ec.marshalOJSON2githubᚗcomᚋsyssonᚋocistoreᚋqueryᚐJSON(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Manifest_details(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	return graphql.NewScalarFieldContext("Manifest", field, true, false, errors.New("field of type JSON does not have child fields"))
+}
+
 func (ec *executionContext) _Manifest_subject(ctx context.Context, field graphql.CollectedField, obj *Manifest) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3698,6 +3779,50 @@ func (ec *executionContext) fieldContext_Query_repository(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_manifest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.fieldContext_Query_manifest(ctx, field)
+		},
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.Resolvers.Query().Manifest(ctx, fc.Args["repository"].(string), fc.Args["digest"].(*string), fc.Args["reference"].(*string))
+		},
+		nil,
+		func(ctx context.Context, selections ast.SelectionSet, v *Manifest) graphql.Marshaler {
+			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, selections, v)
+		},
+		true,
+		false,
+	)
+}
+func (ec *executionContext) fieldContext_Query_manifest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return ec.childFields_Manifest(ctx, field)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_manifest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_image(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3736,50 +3861,6 @@ func (ec *executionContext) fieldContext_Query_image(ctx context.Context, field 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_image_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_manifest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return ec.fieldContext_Query_manifest(ctx, field)
-		},
-		func(ctx context.Context) (any, error) {
-			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Query().Manifest(ctx, fc.Args["repository"].(string), fc.Args["digest"].(string))
-		},
-		nil,
-		func(ctx context.Context, selections ast.SelectionSet, v *Manifest) graphql.Marshaler {
-			return ec.marshalOManifest2ᚖgithubᚗcomᚋsyssonᚋocistoreᚋqueryᚐManifest(ctx, selections, v)
-		},
-		true,
-		false,
-	)
-}
-func (ec *executionContext) fieldContext_Query_manifest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return ec.childFields_Manifest(ctx, field)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_manifest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6132,6 +6213,16 @@ func (ec *executionContext) _Manifest(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "references":
+			out.Values[i] = ec._Manifest_references(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "details":
+			out.Values[i] = ec._Manifest_details(ctx, field, obj)
+			if out.Values[i] == graphql.RequiredNull {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "subject":
 			field := field
 
@@ -6465,7 +6556,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "image":
+		case "manifest":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -6474,7 +6565,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_image(ctx, field)
+				res = ec._Query_manifest(ctx, field)
 				if res == graphql.RequiredNull {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -6487,7 +6578,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "manifest":
+		case "image":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -6496,7 +6587,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_manifest(ctx, field)
+				res = ec._Query_image(ctx, field)
 				if res == graphql.RequiredNull {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -7795,6 +7886,24 @@ func (ec *executionContext) marshalOInt2ᚖint32(ctx context.Context, sel ast.Se
 	_ = sel
 	_ = ctx
 	res := graphql.MarshalInt32(*v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOJSON2githubᚗcomᚋsyssonᚋocistoreᚋqueryᚐJSON(ctx context.Context, v any) (JSON, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := UnmarshalJSON(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOJSON2githubᚗcomᚋsyssonᚋocistoreᚋqueryᚐJSON(ctx context.Context, sel ast.SelectionSet, v JSON) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	_ = sel
+	_ = ctx
+	res := MarshalJSON(v)
 	return res
 }
 
